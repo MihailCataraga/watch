@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock</title>
+    <style>
+        body {
+            background: linear-gradient(90deg,rgb(238, 189, 189), rgb(184, 238, 184));
+        }
+
+        #my-canvas {
+            display: block;
+            margin: 10% auto;
+            border: 12px solid #b9bff8; 
+            border-radius: 50%;
+        }    
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <canvas id="my-canvas" width="500px" height="500px">
+            Your web browser does not support canvas element.
+        </canvas>
+    </div>
+    <script>
+        window.onload = draw;
+        const D = new Date();
+        let text = "";
+        let angle = 0;
+        let angleS = 0;
+        let angleM = 60;
+        let angleH = 96;
+        let angleX = 36;
+        var hoursX = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        var hoursXX = ["10", "11", "12"];
+
+        function draw() {
+            let myCanvas = document.getElementById("my-canvas");
+            if (myCanvas.getContext) {
+                let ctx = myCanvas.getContext('2d');
+                ctx.beginPath();
+                ctx.fillStyle = '#d3d5e7';
+                ctx.arc(250, 250, 250, 0, 2 * Math.PI);
+                ctx.fill();
+                update(ctx);
+                hour(ctx);
+                min(ctx);
+                sec(ctx);  
+            } else {
+                alert("Canvas is not supported.");
+            }
+        }
+
+        function update(ctx) {
+            for(let i = 0; i < 60; i ++) {
+                ctx.translate(250, 250);
+                ctx.rotate((Math.PI / 180) * angle);
+                ctx.translate(-250, -250);
+                ctx.beginPath();
+                ctx.fillStyle = '#000000';
+                ctx.arc(250, 85, 2, 0, 2* Math.PI);
+                ctx.fill();
+                ctx.restore();
+                angle = 6;
+            }  
+
+            for(let i = 0; i < hoursX.length; i++) {
+                text = hoursX[i];
+                ctx.translate(250, 250);
+                ctx.rotate((Math.PI / 180) * angleX);
+                ctx.translate(-250, -250);
+                ctx.font = 'bold 36px sans-serif';
+                ctx.fillStyle = "#000000";
+                ctx.fillText(text, 240, 75);
+                ctx.beginPath();
+                ctx.fillStyle = '#000000';
+                ctx.arc(250, 85, 5, 0, 2* Math.PI);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.fillStyle = '#ffffff';
+                ctx.arc(250, 85, 2, 0, 2* Math.PI);
+                ctx.fill();
+                angleX = 30;
+            }
+
+            for(let i = 0; i < hoursXX.length; i++) {
+                text = hoursXX[i];
+                ctx.translate(250, 250);
+                ctx.rotate((Math.PI / 180) * angleX);
+                ctx.translate(-250, -250);
+                ctx.font = 'bold 36px sans-serif';
+                ctx.fillStyle = "#000000";
+                ctx.fillText(text, 230, 75);
+                ctx.beginPath();
+                ctx.fillStyle = '#000000';
+                ctx.arc(250, 85, 5, 0, 2* Math.PI);
+                ctx.fill();
+                ctx.restore();
+                ctx.beginPath();
+                ctx.fillStyle = '#ffffff';
+                ctx.arc(250, 85, 2, 0, 2* Math.PI);
+                ctx.fill();
+                angleX = 30;
+            }
+        }
+
+        function hour(ctx) {
+            ctx.beginPath();
+            ctx.fillStyle = '#d3d5e7';
+            ctx.arc(249, 250, 155, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.save();
+            ctx.translate(250, 250);
+            ctx.rotate((Math.PI / 180) * angleH);
+            ctx.translate(-250, -250);
+            ctx.beginPath();
+            ctx.fillStyle = '#000000';
+            ctx.rect(246, 250, 8, -100);
+            ctx.moveTo(242, 150);
+            ctx.lineTo(258, 150);
+            ctx.lineTo(250, 140);
+            ctx.fill();
+            ctx.restore();
+            angleH += 360 / 60 / 60 / 12;
+            requestId = requestAnimationFrame(function () {
+                setTimeout(() => {
+                    hour(ctx)
+                }, 1000);
+            });
+            ctx.beginPath();
+            ctx.fillStyle = '#ffffff';
+            ctx.arc(250, 250, 10, 0, 2* Math.PI);
+            ctx.fill();
+        }
+
+        function min(ctx) {
+            ctx.save();
+            ctx.translate(250, 250);
+            ctx.rotate((Math.PI / 180) * (angleM));
+            ctx.translate(-250, -250);
+            ctx.beginPath();
+            ctx.fillStyle = '#000000';
+            ctx.rect(249, 250, 3, -120);
+            ctx.moveTo(244, 130);
+            ctx.lineTo(256, 130);
+            ctx.lineTo(250, 120);
+            ctx.fill();
+            ctx.restore();
+            angleM += 360 / 60 / 60;
+            requestId = requestAnimationFrame(function () {
+                setTimeout(() => {
+                    min(ctx)
+                }, 1000);
+            });
+            ctx.beginPath();
+            ctx.fillStyle = '#ffffff';
+            ctx.arc(250, 250, 10, 0, 2* Math.PI);
+            ctx.fill();
+        }
+        
+        function sec(ctx) {
+            ctx.save();
+            ctx.translate(250, 250);
+            ctx.rotate((Math.PI / 180) * angleS); 
+            ctx.translate(-250, -250);
+            ctx.beginPath();
+            ctx.fillStyle = '#000000';
+            ctx.rect(250, 250, 1, -150);
+            ctx.moveTo(245, 110);
+            ctx.lineTo(257, 110);
+            ctx.lineTo(251, 100);
+            ctx.fill();
+            ctx.restore();
+            angleS += 6;
+            requestId = requestAnimationFrame(function () {
+                setTimeout(() => {
+                    sec(ctx)
+                }, 1000);
+            });
+            ctx.beginPath();
+            ctx.fillStyle = '#ffffff';
+            ctx.arc(250, 250, 10, 0, 2* Math.PI);
+            ctx.fill();
+        }   
+    </script>
+</body>
+</html>
